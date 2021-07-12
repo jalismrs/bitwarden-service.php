@@ -74,9 +74,7 @@ class BitwardenService
      */
     private function execCommand(array $command): string
     {
-        $process = new Process($command, null, [
-            'NODE_EXTRA_CA_CERTS' => '/Users/sbntt/Downloads/Certificat_NAS/syno-ca-cert.pem'
-        ]);
+        $process = new Process($command);
         $process->run();
 
         if (!$process->isSuccessful()) {

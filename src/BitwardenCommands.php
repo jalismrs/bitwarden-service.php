@@ -6,7 +6,9 @@ abstract class BitwardenCommands
 {
     public static function STATUS_COMMAND(?string $session): array
     {
-        return self::withNullableSession(['bw', 'status'], $session);
+        return self::withOptions(['bw', 'status'], [
+            '--session' => $session,
+        ]);
     }
 
     public static function LOGIN_COMMAND(string $username, string $password): array
@@ -19,16 +21,22 @@ abstract class BitwardenCommands
         return ['bw', 'unlock', '--raw', $password];
     }
 
-    public static function SEARCH_ITEMS_COMMAND(string $session, string $organizationid, string $search): array
+    public static function SEARCH_ITEMS_COMMAND(string $session, ?string $organizationId, string $search): array
     {
-        return ['bw', 'list', 'items', '--organizationid', $organizationid, '--search', $search, '--session', $session];
+        return self::withOptions(['bw', 'list', 'items'], [
+            '--organizationid' => $organizationId,
+            '--search' => $search,
+            '--session' => $session,
+        ]);
     }
 
-    private static function withNullableSession(array $cmd, ?string $session): array
+    private static function withOptions(array $cmd, array $options): array
     {
-        if ($session !== null) {
-            $cmd[] = '--session';
-            $cmd[] = $session;
+        foreach ($options as $name => $value) {
+            if ($value !== null && !empty($value)) {
+                $cmd[] = $name;
+                $cmd[] = $value;
+            }
         }
 
         return $cmd;

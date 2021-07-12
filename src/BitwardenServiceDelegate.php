@@ -4,7 +4,7 @@ namespace Jalismrs\Bitwarden;
 
 interface BitwardenServiceDelegate
 {
-    public function getOrganizationId(): string;
+    public function getOrganizationId(): ?string;
 
     public function getUserEmail(): string;
 
