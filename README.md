@@ -30,7 +30,7 @@ If necessary, set a custom bitwarden server url:
 You must implement a `BitwardenServiceDelegate` to create an instance of this service.
 
 then:
-``php
+```php
 $service = new BitwardenService(new MyBitwardenDelegate());
 $items = $service->searchItems('web5902');
 
