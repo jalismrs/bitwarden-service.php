@@ -15,10 +15,26 @@ class BitwardenService
     ) {}
 
     /**
+     * @return BitwardenItem[]
+     * @throws JsonException
+     */
+    public function searchItems(string $search): array
+    {
+        $session = $this->getSession();
+        $output = $this->execCommand(BitwardenCommands::SEARCH_ITEMS_COMMAND(
+            $session,
+            $this->delegate->getOrganizationId(),
+            $search,
+        ));
+
+        return BitwardenItem::arrayFromJson($output);
+    }
+
+    /**
      * @throws JsonException
      * @throws ProcessFailedException
      */
-    public function getStatus(?string $session): BitwardenStatus
+    private function getStatus(?string $session): BitwardenStatus
     {
         $output = $this->execCommand(BitwardenCommands::STATUS_COMMAND($session));
         return BitwardenStatus::fromJson($output);
@@ -27,7 +43,7 @@ class BitwardenService
     /**
      * @throws JsonException
      */
-    public function getSession(): string
+    private function getSession(): string
     {
         $session = $this->delegate->restoreSession();
         $status = $this->getStatus($session);
@@ -52,21 +68,6 @@ class BitwardenService
         $this->delegate->storeSession($session);
 
         return $session;
-    }
-
-    /**
-     * @throws JsonException
-     */
-    public function searchItems(string $search): array
-    {
-        $session = $this->getSession();
-        $output = $this->execCommand(BitwardenCommands::SEARCH_ITEMS_COMMAND(
-            $session,
-            $this->delegate->getOrganizationId(),
-            $search,
-        ));
-
-        return BitwardenItem::arrayFromJson($output);
     }
 
     /**
