@@ -11,14 +11,12 @@ If necessary, set a custom bitwarden server url:
 
 ## Installation
 
+```
+composer require jalismrs/bitwarden-php
+```
+or
 ```json
 {
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/jalismrs/bitwarden-service.php.git"
-    }
-  ],
   "require": {
     "jalismrs/bitwarden-php": "^1.0"
   }
