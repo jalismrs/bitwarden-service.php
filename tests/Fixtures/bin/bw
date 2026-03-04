@@ -1,0 +1,91 @@
+#!/usr/bin/env php
+<?php
+
+$args = $argv;
+array_shift($args);
+
+$runtimeDir = dirname(__DIR__) . '/runtime';
+$logFile = $runtimeDir . '/log.jsonl';
+
+if (is_dir($runtimeDir)) {
+    file_put_contents($logFile, json_encode($args, JSON_THROW_ON_ERROR) . PHP_EOL, FILE_APPEND);
+}
+
+$scenarioFile = $runtimeDir . '/scenario.txt';
+$scenario = is_file($scenarioFile) ? trim((string) file_get_contents($scenarioFile)) : 'unlocked';
+
+$primaryCommand = $args[0] ?? null;
+$secondaryCommand = $args[1] ?? null;
+
+if ($primaryCommand === 'status') {
+    if ($scenario === 'locked') {
+        echo json_encode([
+            'serverUrl' => 'https://vault.bitwarden.test',
+            'lastSync' => null,
+            'userEmail' => 'john@example.test',
+            'userId' => 'user-1',
+            'status' => 'locked',
+        ], JSON_THROW_ON_ERROR);
+        exit(0);
+    }
+
+    if ($scenario === 'unauthenticated') {
+        echo json_encode([
+            'serverUrl' => 'https://vault.bitwarden.test',
+            'lastSync' => null,
+            'userEmail' => null,
+            'userId' => null,
+            'status' => 'unauthenticated',
+        ], JSON_THROW_ON_ERROR);
+        exit(0);
+    }
+
+    echo json_encode([
+        'serverUrl' => 'https://vault.bitwarden.test',
+        'lastSync' => '2026-03-04T10:00:00+00:00',
+        'userEmail' => 'john@example.test',
+        'userId' => 'user-1',
+        'status' => 'unlocked',
+    ], JSON_THROW_ON_ERROR);
+    exit(0);
+}
+
+if ($primaryCommand === 'login') {
+    echo 'logged-session-token';
+    exit(0);
+}
+
+if ($primaryCommand === 'unlock') {
+    echo 'unlocked-session-token';
+    exit(0);
+}
+
+if ($primaryCommand === 'list' && $secondaryCommand === 'items') {
+    if ($scenario === 'search-failure') {
+        fwrite(STDERR, 'search failed');
+        exit(1);
+    }
+
+    echo json_encode([
+        [
+            'object' => 'item',
+            'id' => 'item-1',
+            'organizationId' => in_array('--organizationid', $args, true) ? 'org-123' : null,
+            'folderId' => null,
+            'type' => 1,
+            'name' => 'Example Item',
+            'login' => [
+                'username' => 'john@example.test',
+                'password' => 'password',
+                'topt' => null,
+                'passwordRevisionDate' => null,
+            ],
+            'collectionIds' => ['collection-1'],
+            'revisionDate' => '2026-03-04T10:00:00+00:00',
+        ],
+    ], JSON_THROW_ON_ERROR);
+    exit(0);
+}
+
+fwrite(STDERR, 'unexpected command');
+exit(1);
