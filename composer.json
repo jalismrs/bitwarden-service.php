@@ -1,7 +1,7 @@
 {
     "name": "jalismrs/bitwarden-php",
     "description": "Services to access bitwarden data",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "type": "library",
     "require": {
         "php": ">=8.0",
