@@ -3,3 +3,6 @@ vendor
 composer.lock
 main.php
 .idea
+.phpunit.result.cache
+.phpunit.cache
+tests/Fixtures/runtime
